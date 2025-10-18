@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>05</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0d1117;
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+    }
+    #login {display: none;}
+    input {padding: 10px; border: none; border-radius: 5px;}
+    button {padding: 10px 20px; background: #238636; color: white; border: none; border-radius: 5px;}
+  </style>
+</head>
+<body>
+  <div id="auth">
+    <h2>🔒 Password</h2>
+    <input type="password" id="pass" placeholder="Contraseña">
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <div id="login">
+    <h1>Bienvenido Angel</h1>
+    <p>Esta es tu página privada.</p>
+  </div>
+
+  <script>
+    function login() {
+      const clave = document.getElementById("pass").value;
+      if (clave === "wlan32e3d7") { // Cambia 1234 por tu contraseña
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("login").style.display = "block";
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    }
+  </script>
+</body>
+</html>
