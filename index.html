@@ -1,20 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido Angel - Página Personal</title>
+    <title>Bienvenido Angel - Acceso Privado</title>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -23,419 +14,604 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            color: var(--light-color);
-            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-        }
-        
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            width: 100%;
+            max-width: 500px;
         }
         
-        header {
-            background-color: rgba(44, 62, 80, 0.9);
-            padding: 20px 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--light-color);
-        }
-        
-        .logo span {
-            color: var(--primary-color);
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 20px;
-        }
-        
-        nav ul li a {
-            color: var(--light-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        
-        nav ul li a:hover {
-            background-color: var(--primary-color);
-        }
-        
-        .hero {
-            padding: 100px 0;
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
         
-        .hero h1 {
-            font-size: 3.5rem;
+        .page-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .password-form {
+            margin: 25px 0;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s;
         }
         
-        .hero p {
-            font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto 30px;
+        .password-input:focus {
+            border-color: #667eea;
+            outline: none;
         }
         
-        .btn {
-            display: inline-block;
-            background-color: var(--primary-color);
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: var(--transition);
             border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            width: 100%;
         }
         
-        .btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-3px);
+        .submit-btn:hover {
+            transform: translateY(-2px);
         }
         
-        .features {
-            padding: 80px 0;
-            background-color: rgba(44, 62, 80, 0.8);
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
         }
         
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2.5rem;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .feature-icon {
+        .lock-icon {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: var(--primary-color);
+            color: #667eea;
         }
         
-        .feature-card h3 {
-            margin-bottom: 15px;
+        .welcome-message {
             font-size: 1.5rem;
+            color: #333;
+            margin: 20px 0;
         }
         
-        .contact {
-            padding: 80px 0;
-            text-align: center;
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
         }
         
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+        .user-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
+        .info-item {
+            margin: 10px 0;
             text-align: left;
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--dark-color);
-        }
-        
-        footer {
-            background-color: var(--secondary-color);
-            padding: 30px 0;
-            text-align: center;
-            margin-top: auto;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            margin: 0 10px;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
-        .social-links a:hover {
-            transform: translateY(-5px);
-            background-color: var(--accent-color);
-        }
-        
-        .clock {
-            font-size: 1.2rem;
-            margin-top: 20px;
+        .info-label {
             font-weight: bold;
+            color: #333;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-            
-            nav ul {
-                margin-top: 20px;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
+        .info-value {
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">Bienvenido <span>Angel</span></div>
-                <nav>
-                    <ul>
-                        <li><a href="#inicio">Inicio</a></li>
-                        <li><a href="#acerca">Acerca de</a></li>
-                        <li><a href="#servicios">Servicios</a></li>
-                        <li><a href="#contacto">Contacto</a></li>
-                    </ul>
-                </nav>
+    <!-- Contenedor de Login -->
+    <div class="container">
+        <div class="login-container" id="loginContainer">
+            <div class="lock-icon">🔒</div>
+            <h1>Acceso Privado</h1>
+            <p class="subtitle">Esta página es propiedad de Bienvenido Angel</p>
+            
+            <form class="password-form" id="passwordForm">
+                <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa la contraseña" required>
+                <button type="submit" class="submit-btn">Acceder</button>
+            </form>
+            
+            <div class="error-message" id="errorMessage">
+                Contraseña incorrecta. Intenta nuevamente.
             </div>
+            
+            <p style="color: #666; margin-top: 20px; font-size: 0.9rem;">
+                Solo personas autorizadas pueden acceder a esta página.
+            </p>
         </div>
-    </header>
-
-    <section class="hero" id="inicio">
-        <div class="container">
-            <h1>Bienvenido a mi Página Personal</h1>
-            <p>Esta es tu página privada, ahora mejorada con un diseño moderno y funcionalidades interactivas.</p>
-            <a href="#contacto" class="btn">Contáctame</a>
-        </div>
-    </section>
-
-    <section class="features" id="acerca">
-        <div class="container">
-            <h2 class="section-title">Acerca de Mí</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">👨‍💻</div>
-                    <h3>Desarrollo Web</h3>
-                    <p>Creación de sitios web modernos y responsivos utilizando las últimas tecnologías.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Diseño Responsivo</h3>
-                    <p>Diseños que se adaptan perfectamente a cualquier dispositivo móvil o de escritorio.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Optimización</h3>
-                    <p>Sitios web optimizados para un rendimiento rápido y una excelente experiencia de usuario.</p>
-                </div>
+        
+        <!-- Contenedor de la Página Principal -->
+        <div class="page-container" id="pageContainer">
+            <h1>¡Bienvenido Angel!</h1>
+            <p class="subtitle">Esta es mi página personal privada</p>
+            
+            <div class="welcome-message">
+                ¡Has accedido correctamente!
             </div>
-        </div>
-    </section>
-
-    <section class="features" id="servicios">
-        <div class="container">
-            <h2 class="section-title">Mis Servicios</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">💼</div>
-                    <h3>Consultoría</h3>
-                    <p>Asesoramiento profesional para tus proyectos digitales.</p>
+            
+            <div class="user-info">
+                <div class="info-item">
+                    <span class="info-label">Propietario:</span>
+                    <span class="info-value">Bienvenido Angel</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Diseño Web</h3>
-                    <p>Creación de interfaces atractivas y funcionales.</p>
+                <div class="info-item">
+                    <span class="info-label">Tipo:</span>
+                    <span class="info-value">Página Personal Privada</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Mantenimiento</h3>
-                    <p>Soporte continuo para mantener tu sitio actualizado y seguro.</p>
+                <div class="info-item">
+                    <span class="info-label">Acceso:</span>
+                    <span class="info-value">Restringido</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Último acceso:</span>
+                    <span class="info-value" id="lastAccess"></span>
                 </div>
             </div>
+            
+            <p style="margin: 20px 0; color: #333;">
+                Esta página fue creada como mi espacio personal en internet. 
+                Aquí puedes encontrar información sobre mis intereses, proyectos o simplemente usar este espacio como tu página privada.
+            </p>
+            
+            <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
         </div>
-    </section>
-
-    <section class="contact" id="contacto">
-        <div class="container">
-            <h2 class="section-title">Contáctame</h2>
-            <div class="contact-form">
-                <form id="contactForm">
-                    <div class="form-group">
-                        <label for="name">Nombre</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Mensaje</label>
-                        <textarea id="message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn">Enviar Mensaje</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="social-links">
-                <a href="#" title="Facebook">f</a>
-                <a href="#" title="Twitter">t</a>
-                <a href="#" title="Instagram">i</a>
-                <a href="#" title="LinkedIn">in</a>
-                <a href="#" title="GitHub">gh</a>
-            </div>
-            <p>&copy; 2023 Bienvenido Angel. Todos los derechos reservados.</p>
-            <div class="clock" id="clock">Cargando hora...</div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Reloj en tiempo real
-        function updateClock() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            const dateTimeString = now.toLocaleDateString('es-ES', options);
-            document.getElementById('clock').textContent = dateTimeString;
+        // Contraseña para acceder (puedes cambiarla)
+        const CORRECT_PASSWORD = "angel123";
+        
+        // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const pageContainer = document.getElementById('pageContainer');
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const lastAccessElement = document.getElementById('lastAccess');
+        
+        // Verificar si ya hay una sesión activa
+        if (localStorage.getItem('authenticated') === 'true') {
+            showPage();
         }
         
-        // Actualizar el reloj cada segundo
-        setInterval(updateClock, 1000);
-        updateClock(); // Llamada inicial
-        
-        // Manejo del formulario de contacto
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        // Manejar el envío del formulario de contraseña
+        passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('¡Gracias por tu mensaje! Te responderé pronto.');
-            this.reset();
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === CORRECT_PASSWORD) {
+                // Contraseña correcta
+                localStorage.setItem('authenticated', 'true');
+                showPage();
+            } else {
+                // Contraseña incorrecta
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Agregar efecto de vibración al input
+                passwordInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    passwordInput.style.animation = '';
+                }, 500);
+            }
         });
         
-        // Navegación suave
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                document.querySelector(targetId).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+        // Manejar el cierre de sesión
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('authenticated');
+            showLogin();
         });
         
-        // Efecto de aparición al hacer scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // Mostrar la página principal
+        function showPage() {
+            loginContainer.style.display = 'none';
+            pageContainer.style.display = 'block';
+            
+            // Actualizar la hora del último acceso
+            const now = new Date();
+            lastAccessElement.textContent = now.toLocaleString('es-ES');
+        }
         
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
+        // Mostrar el formulario de login
+        function showLogin() {
+            pageContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            passwordInput.value = '';
+            errorMessage.style.display = 'none';
+            passwordInput.focus();
+        }
         
-        // Aplicar efecto a las tarjetas
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.style.opacity = 0;
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            observer.observe(card);
-        });
+        // Agregar estilo para la animación de vibración
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
+```
+
+Características de esta página:
+
+🔐 Sistema de Contraseña:
+
+· Contraseña actual: angel123 (puedes cambiarla en el código)
+· Los accesos se guardan en el navegador
+· Mensaje de error si la contraseña es incorrecta
+
+🎨 Diseño Profesional:
+
+· Interfaz moderna y limpia
+· Diseño responsive para todos los dispositivos
+· Efectos visuales y animaciones
+
+⚡ Funcionalidades:
+
+· Registro del último acceso
+· Sistema de persistencia de sesión
+· Botón para cerrar sesión
+· Efectos de vibración en error de contraseña
+
+Para personalizar:
+
+1. Cambiar la contraseña: Busca esta línea en el JavaScriptPágina Personal con Contraseña
+
+Voy a crear una página que requiera contraseña para acceder. Aquí tienes el código completo:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido Angel - Acceso Privado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .page-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .password-form {
+            margin: 25px 0;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .welcome-message {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 20px 0;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .user-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .info-item {
+            margin: 10px 0;
+            text-align: left;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .info-value {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor de Login -->
+    <div class="container">
+        <div class="login-container" id="loginContainer">
+            <div class="lock-icon">🔒</div>
+            <h1>Acceso Privado</h1>
+            <p class="subtitle">Esta página es propiedad de Bienvenido Angel</p>
+            
+            <form class="password-form" id="passwordForm">
+                <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa la contraseña" required>
+                <button type="submit" class="submit-btn">Acceder</button>
+            </form>
+            
+            <div class="error-message" id="errorMessage">
+                Contraseña incorrecta. Intenta nuevamente.
+            </div>
+            
+            <p style="color: #666; margin-top: 20px; font-size: 0.9rem;">
+                Solo personas autorizadas pueden acceder a esta página.
+            </p>
+        </div>
+        
+        <!-- Contenedor de la Página Principal -->
+        <div class="page-container" id="pageContainer">
+            <h1>¡Bienvenido Angel!</h1>
+            <p class="subtitle">Esta es mi página personal privada</p>
+            
+            <div class="welcome-message">
+                ¡Has accedido correctamente!
+            </div>
+            
+            <div class="user-info">
+                <div class="info-item">
+                    <span class="info-label">Propietario:</span>
+                    <span class="info-value">Bienvenido Angel</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tipo:</span>
+                    <span class="info-value">Página Personal Privada</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Acceso:</span>
+                    <span class="info-value">Restringido</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Último acceso:</span>
+                    <span class="info-value" id="lastAccess"></span>
+                </div>
+            </div>
+            
+            <p style="margin: 20px 0; color: #333;">
+                Esta página fue creada como mi espacio personal en internet. 
+                Aquí puedes encontrar información sobre mis intereses, proyectos o simplemente usar este espacio como tu página privada.
+            </p>
+            
+            <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script>
+        // Contraseña para acceder (puedes cambiarla)
+        const CORRECT_PASSWORD = "wlan32e3d7";
+        
+        // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const pageContainer = document.getElementById('pageContainer');
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const lastAccessElement = document.getElementById('lastAccess');
+        
+        // Verificar si ya hay una sesión activa
+        if (localStorage.getItem('authenticated') === 'true') {
+            showPage();
+        }
+        
+        // Manejar el envío del formulario de contraseña
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const enteredPassword = passwordInput.value;
+            
+            if (enteredPassword === CORRECT_PASSWORD) {
+                // Contraseña correcta
+                localStorage.setItem('authenticated', 'true');
+                showPage();
+            } else {
+                // Contraseña incorrecta
+                errorMessage.style.display = 'block';
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+                // Agregar efecto de vibración al input
+                passwordInput.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    passwordInput.style.animation = '';
+                }, 500);
+            }
+        });
+        
+        // Manejar el cierre de sesión
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('authenticated');
+            showLogin();
+        });
+        
+        // Mostrar la página principal
+        function showPage() {
+            loginContainer.style.display = 'none';
+            pageContainer.style.display = 'block';
+            
+            // Actualizar la hora del último acceso
+            const now = new Date();
+            lastAccessElement.textContent = now.toLocaleString('es-ES');
+        }
+        
+        // Mostrar el formulario de login
+        function showLogin() {
+            pageContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            passwordInput.value = '';
+            errorMessage.style.display = 'none';
+            passwordInput.focus();
+        }
+        
+        // Agregar estilo para la animación de vibración
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+```
+
+Características de esta página:
+
+🔐 Sistema de Contraseña:
+
+· Contraseña actual: angel123 (puedes cambiarla en el código)
+· Los accesos se guardan en el navegador
+· Mensaje de error si la contraseña es incorrecta
+
+🎨 Diseño Profesional:
+
+· Interfaz moderna y limpia
+· Diseño responsive para todos los dispositivos
+· Efectos visuales y animaciones
+
+⚡ Funcionalidades:
+
+· Registro del último acceso
+· Sistema de persistencia de sesión
+· Botón para cerrar sesión
+· Efectos de vibración en error de contraseña
+
+Para personalizar:
+
+1. Cambiar la contraseña: Busca esta línea en el JavaScript
