@@ -11,6 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -99,6 +102,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            justify-content: center;
         }
         
         .code-input {
@@ -284,6 +288,11 @@
             text-decoration: underline;
         }
         
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -440,7 +449,7 @@
     </div>
 
     <script>
-        // Configuración de Firebase CON TUS CREDENCIALES
+        // 🔥 CONFIGURACIÓN DE FIREBASE (Tus credenciales)
         const firebaseConfig = {
             apiKey: "AIzaSyBhBEtCo8Mjftwr8Uz67KJCSpIKgpw0200",
             authDomain: "mi-pagina-e045c.firebaseapp.com",
@@ -450,10 +459,20 @@
             appId: "1:641205268128:web:a05470d1959b584c3be3c5"
         };
 
+        // 📧 CONFIGURACIÓN DE EMAILJS (TUS CREDENCIALES REALES)
+        const emailjsConfig = {
+            serviceId: "service_1bqq27q",
+            templateId: "template_91rr2fl", 
+            publicKey: "zmcvi6ukP9rMl"
+        };
+
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // Inicializar EmailJS
+        emailjs.init(emailjsConfig.publicKey);
 
         // Elementos del DOM
         const loginContainer = document.getElementById('loginContainer');
@@ -483,18 +502,28 @@
             return Math.floor(100000 + Math.random() * 900000).toString();
         }
 
-        // Simular envío de código por correo (en un caso real usarías un servicio de email)
-        function sendVerificationCode(email, code) {
-            console.log(`Código de verificación para ${email}: ${code}`);
-            // En un caso real, aquí integrarías con SendGrid, EmailJS, etc.
-            alert(`🔐 Código de verificación: ${code}\n\n(Para producción, integra un servicio de email real)`);
-            
-            // Guardar el código en Firestore para validación
-            return db.collection('verificationCodes').doc(email).set({
-                code: code,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                used: false
-            });
+        // Enviar código de verificación por EmailJS
+        async function sendVerificationCode(email, username, code) {
+            try {
+                const templateParams = {
+                    to_email: email,
+                    username: username,
+                    passcode: code,
+                    email: email
+                };
+
+                const response = await emailjs.send(
+                    emailjsConfig.serviceId,
+                    emailjsConfig.templateId,
+                    templateParams
+                );
+
+                console.log('✅ Email enviado exitosamente:', response);
+                return true;
+            } catch (error) {
+                console.error('❌ Error enviando email:', error);
+                throw new Error('No pudimos enviar el código de verificación. Intenta nuevamente.');
+            }
         }
 
         // Mostrar/ocultar formularios
@@ -539,14 +568,14 @@
             e.preventDefault();
             const registerBtn = document.getElementById('registerBtn');
             const registerErrorMessage = document.getElementById('registerErrorMessage');
-            const registerSuccessMessage = document.getElementById('registerSuccessMessage');
             
             const username = document.getElementById('registerUsername').value;
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
 
             registerBtn.disabled = true;
-            registerBtn.textContent = 'Creando cuenta...';
+            registerBtn.textContent = 'Enviando código...';
+            registerBtn.classList.add('loading');
             clearMessages();
 
             try {
@@ -556,37 +585,31 @@
                 // Guardar datos temporales del usuario
                 pendingUser = { username, email, password };
                 
-                // Enviar código de verificación
-                await sendVerificationCode(email, verificationCode);
+                // Enviar código de verificación por EMAIL REAL
+                await sendVerificationCode(email, username, verificationCode);
                 
                 // Mostrar panel de verificación
                 userEmailDisplay.textContent = email;
                 registerContainer.style.display = 'none';
                 verifyContainer.style.display = 'block';
                 
+                // Mostrar mensaje de éxito
+                const verifySuccessMessage = document.getElementById('verifySuccessMessage');
+                verifySuccessMessage.style.display = 'block';
+                verifySuccessMessage.textContent = '✅ ¡Código enviado! Revisa tu correo electrónico.';
+                
                 // Enfocar el primer input del código
-                document.getElementById('code1').focus();
+                setTimeout(() => {
+                    document.getElementById('code1').focus();
+                }, 500);
 
             } catch (error) {
-                let errorMessage = 'Error al crear la cuenta. ';
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        errorMessage += 'Este correo ya está registrado.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage += 'El correo electrónico no es válido.';
-                        break;
-                    case 'auth/weak-password':
-                        errorMessage += 'La contraseña es demasiado débil.';
-                        break;
-                    default:
-                        errorMessage += error.message;
-                }
                 registerErrorMessage.style.display = 'block';
-                registerErrorMessage.textContent = errorMessage;
+                registerErrorMessage.textContent = error.message;
             } finally {
                 registerBtn.disabled = false;
                 registerBtn.textContent = 'Crear cuenta';
+                registerBtn.classList.remove('loading');
             }
         });
 
@@ -602,6 +625,7 @@
             
             verifyBtn.disabled = true;
             verifyBtn.textContent = 'Verificando...';
+            verifyBtn.classList.add('loading');
             clearMessages();
 
             try {
@@ -627,13 +651,8 @@
                         verified: true
                     });
 
-                    // Marcar código como usado
-                    await db.collection('verificationCodes').doc(pendingUser.email).update({
-                        used: true
-                    });
-
                     verifySuccessMessage.style.display = 'block';
-                    verifySuccessMessage.textContent = '¡Cuenta verificada exitosamente!';
+                    verifySuccessMessage.textContent = '✅ ¡Cuenta verificada exitosamente! Redirigiendo...';
                     
                     // Limpiar datos temporales
                     pendingUser = null;
@@ -642,10 +661,10 @@
                     // Redirigir a la página principal
                     setTimeout(() => {
                         showPage(user);
-                    }, 1500);
+                    }, 2000);
 
                 } else {
-                    throw new Error('Código de verificación incorrecto');
+                    throw new Error('❌ Código de verificación incorrecto. Intenta nuevamente.');
                 }
 
             } catch (error) {
@@ -662,6 +681,7 @@
             } finally {
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = 'Verificar cuenta';
+                verifyBtn.classList.remove('loading');
             }
         });
 
@@ -669,22 +689,29 @@
         resendCodeLink.addEventListener('click', async () => {
             if (!pendingUser) return;
             
+            const resendCodeLinkElement = document.getElementById('resendCodeLink');
+            const verifySuccessMessage = document.getElementById('verifySuccessMessage');
+            const verifyErrorMessage = document.getElementById('verifyErrorMessage');
+            
+            resendCodeLinkElement.textContent = 'Enviando...';
+            clearMessages();
+
             try {
                 verificationCode = generateVerificationCode();
-                await sendVerificationCode(pendingUser.email, verificationCode);
+                await sendVerificationCode(pendingUser.email, pendingUser.username, verificationCode);
                 
-                const verifySuccessMessage = document.getElementById('verifySuccessMessage');
                 verifySuccessMessage.style.display = 'block';
-                verifySuccessMessage.textContent = '¡Código reenviado! Revisa tu correo.';
+                verifySuccessMessage.textContent = '✅ ¡Código reenviado! Revisa tu correo electrónico.';
                 
                 // Limpiar inputs
                 codeInputs.forEach(input => input.value = '');
                 document.getElementById('code1').focus();
                 
             } catch (error) {
-                const verifyErrorMessage = document.getElementById('verifyErrorMessage');
                 verifyErrorMessage.style.display = 'block';
-                verifyErrorMessage.textContent = 'Error al reenviar el código.';
+                verifyErrorMessage.textContent = error.message;
+            } finally {
+                resendCodeLinkElement.textContent = 'Reenviar código';
             }
         });
 
@@ -699,13 +726,14 @@
 
             loginBtn.disabled = true;
             loginBtn.textContent = 'Iniciando sesión...';
+            loginBtn.classList.add('loading');
             clearMessages();
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
                 // El cambio de estado de autenticación manejará la redirección
             } catch (error) {
-                let errorMessage = 'Error al iniciar sesión. ';
+                let errorMessage = '❌ Error al iniciar sesión. ';
                 switch (error.code) {
                     case 'auth/user-not-found':
                         errorMessage += 'Usuario no encontrado.';
@@ -720,7 +748,7 @@
                         errorMessage += error.message;
                 }
                 loginErrorMessage.style.display = 'block';
-                loginErrorMessage.textContent = errorMessage;
+                loginErrorMessage.textContent = error.message;
                 
                 // Efecto de vibración
                 document.getElementById('loginPassword').style.animation = 'shake 0.4s';
@@ -730,6 +758,7 @@
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Iniciar sesión';
+                loginBtn.classList.remove('loading');
             }
         });
 
@@ -798,3 +827,4 @@
         document.getElementById('loginEmail').focus();
     </script>
 </body>
+</html>
