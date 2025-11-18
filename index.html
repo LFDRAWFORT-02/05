@@ -3,140 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido Angel - Acceso Privado</title>
+    <title>Bienvenido Angel | Acceso Privado</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #2b2d42;
         }
         
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
         }
         
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.02),
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
             text-align: center;
+            border: 1px solid #f1f3f4;
         }
         
         .page-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.02),
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
             text-align: center;
             display: none;
+            border: 1px solid #f1f3f4;
         }
         
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.2rem;
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: #2b2d42;
+        }
+        
+        .logo-accent {
+            font-weight: 600;
+            color: #000000;
         }
         
         .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.2px;
         }
         
         .password-form {
-            margin: 25px 0;
+            margin: 35px 0;
         }
         
         .password-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
+            padding: 16px 20px;
+            border: 1.5px solid #e9ecef;
             border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            transition: border-color 0.3s;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+            color: #2b2d42;
         }
         
         .password-input:focus {
-            border-color: #667eea;
+            border-color: #495057;
             outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1);
         }
         
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2b2d42;
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 16px 30px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
             width: 100%;
+            letter-spacing: 0.3px;
         }
         
         .submit-btn:hover {
-            transform: translateY(-2px);
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(43, 45, 66, 0.15);
         }
         
         .error-message {
-            color: #e74c3c;
+            color: #dc3545;
             margin-top: 15px;
+            font-size: 0.9rem;
             display: none;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #dc3545;
         }
         
         .lock-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #667eea;
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            color: #6c757d;
+            opacity: 0.8;
         }
         
         .welcome-message {
-            font-size: 1.5rem;
-            color: #333;
-            margin: 20px 0;
+            font-size: 1.4rem;
+            color: #2b2d42;
+            margin: 25px 0;
+            font-weight: 400;
+            letter-spacing: -0.3px;
         }
         
         .logout-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+            background: transparent;
+            color: #6c757d;
+            border: 1.5px solid #e9ecef;
+            padding: 12px 28px;
             border-radius: 8px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            border-color: #495057;
+            color: #2b2d42;
+            background: #f8f9fa;
         }
         
         .user-info {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            margin: 30px 0;
+            padding: 0;
+            background: transparent;
         }
         
         .info-item {
-            margin: 10px 0;
+            margin: 18px 0;
             text-align: left;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f3f4;
         }
         
         .info-label {
-            font-weight: bold;
-            color: #333;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
         }
         
         .info-value {
-            color: #666;
+            color: #2b2d42;
+            font-size: 1rem;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        .page-content {
+            margin: 25px 0;
+            color: #6c757d;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        .access-badge {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #e9ecef;
+            margin-top: 10px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-container, .page-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .login-container, .page-container {
+                padding: 40px 25px;
+            }
         }
     </style>
 </head>
@@ -145,63 +238,64 @@
     <div class="container">
         <div class="login-container" id="loginContainer">
             <div class="lock-icon">🔒</div>
-            <h1>Acceso Privado</h1>
-            <p class="subtitle">Esta página es propiedad de Bienvenido Angel</p>
+            <h1 class="logo">Bienvenido <span class="logo-accent">Angel</span></h1>
+            <p class="subtitle">Acceso restringido a personas autorizadas</p>
             
             <form class="password-form" id="passwordForm">
-                <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa la contraseña" required>
-                <button type="submit" class="submit-btn">Acceder</button>
+                <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa la contraseña de acceso" required>
+                <button type="submit" class="submit-btn">Acceder a la página privada</button>
             </form>
             
             <div class="error-message" id="errorMessage">
-                Contraseña incorrecta. Intenta nuevamente.
+                Contraseña incorrecta. Por favor, intenta nuevamente.
             </div>
             
-            <p style="color: #666; margin-top: 20px; font-size: 0.9rem;">
-                Solo personas autorizadas pueden acceder a esta página.
+            <p style="color: #adb5bd; margin-top: 25px; font-size: 0.85rem;">
+                Solo el propietario y personas autorizadas pueden acceder
             </p>
         </div>
         
         <!-- Contenedor de la Página Principal -->
         <div class="page-container" id="pageContainer">
-            <h1>¡Bienvenido Angel!</h1>
-            <p class="subtitle">Esta es mi página personal privada</p>
+            <h1 class="logo">Bienvenido <span class="logo-accent">Angel</span></h1>
+            <p class="subtitle">Página personal privada</p>
             
             <div class="welcome-message">
-                ¡Has accedido correctamente!
+                Acceso concedido
+            </div>
+            
+            <div class="access-badge">
+                Sesión activa ✓
             </div>
             
             <div class="user-info">
                 <div class="info-item">
-                    <span class="info-label">Propietario:</span>
+                    <span class="info-label">PROPIETARIO</span>
                     <span class="info-value">Bienvenido Angel</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Tipo:</span>
-                    <span class="info-value">Página Personal Privada</span>
+                    <span class="info-label">TIPO DE ACCESO</span>
+                    <span class="info-value">Privado • Personal</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Acceso:</span>
-                    <span class="info-value">Restringido</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Último acceso:</span>
+                    <span class="info-label">ÚLTIMO ACCESO</span>
                     <span class="info-value" id="lastAccess"></span>
                 </div>
             </div>
             
-            <p style="margin: 20px 0; color: #333;">
-                Esta página fue creada como mi espacio personal en internet. 
-                Aquí puedes encontrar información sobre mis intereses, proyectos o simplemente usar este espacio como tu página privada.
-            </p>
+            <div class="page-content">
+                <p>Esta es mi página personal privada. Un espacio digital personal donde puedo almacenar información, ideas o simplemente tener mi presencia en internet.</p>
+                
+                <p style="margin-top: 15px;">El diseño minimalista y la seguridad de acceso reflejan mi preferencia por la elegancia simple y la privacidad.</p>
+            </div>
             
-            <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
+            <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
         </div>
     </div>
 
     <script>
-        // Contraseña para acceder (puedes cambiarla)
-        const CORRECT_PASSWORD = "wlan32e3d7";
+        // Contraseña para acceder (cámbiala por la que prefieras)
+        const CORRECT_PASSWORD = "angel123";
         
         // Elementos del DOM
         const loginContainer = document.getElementById('loginContainer');
@@ -232,11 +326,11 @@
                 passwordInput.value = '';
                 passwordInput.focus();
                 
-                // Agregar efecto de vibración al input
-                passwordInput.style.animation = 'shake 0.5s';
+                // Efecto de vibración
+                passwordInput.style.animation = 'shake 0.4s';
                 setTimeout(() => {
                     passwordInput.style.animation = '';
-                }, 500);
+                }, 400);
             }
         });
         
@@ -253,7 +347,14 @@
             
             // Actualizar la hora del último acceso
             const now = new Date();
-            lastAccessElement.textContent = now.toLocaleString('es-ES');
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            lastAccessElement.textContent = now.toLocaleDateString('es-ES', options);
         }
         
         // Mostrar el formulario de login
@@ -265,16 +366,8 @@
             passwordInput.focus();
         }
         
-        // Agregar estilo para la animación de vibración
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px); }
-                75% { transform: translateX(5px); }
-            }
-        `;
-        document.head.appendChild(style);
+        // Enfocar el input de contraseña al cargar
+        passwordInput.focus();
     </script>
 </body>
 </html>
