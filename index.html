@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido Angel | Acceso Privado</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -27,7 +32,7 @@
             max-width: 480px;
         }
         
-        .login-container {
+        .login-container, .register-container, .page-container {
             background: #ffffff;
             padding: 50px 40px;
             border-radius: 12px;
@@ -37,19 +42,11 @@
                 0 0 0 1px rgba(0, 0, 0, 0.05);
             text-align: center;
             border: 1px solid #f1f3f4;
+            margin-bottom: 20px;
         }
         
-        .page-container {
-            background: #ffffff;
-            padding: 50px 40px;
-            border-radius: 12px;
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.02),
-                0 1px 3px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(0, 0, 0, 0.05);
-            text-align: center;
+        .register-container {
             display: none;
-            border: 1px solid #f1f3f4;
         }
         
         .logo {
@@ -73,23 +70,23 @@
             letter-spacing: 0.2px;
         }
         
-        .password-form {
+        .auth-form {
             margin: 35px 0;
         }
         
-        .password-input {
+        .form-input {
             width: 100%;
             padding: 16px 20px;
             border: 1.5px solid #e9ecef;
             border-radius: 8px;
             font-size: 0.95rem;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
             background: #fafbfc;
             color: #2b2d42;
         }
         
-        .password-input:focus {
+        .form-input:focus {
             border-color: #495057;
             outline: none;
             background: #ffffff;
@@ -108,12 +105,32 @@
             transition: all 0.3s ease;
             width: 100%;
             letter-spacing: 0.3px;
+            margin-bottom: 15px;
         }
         
         .submit-btn:hover {
             background: #000000;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(43, 45, 66, 0.15);
+        }
+        
+        .secondary-btn {
+            background: transparent;
+            color: #6c757d;
+            border: 1.5px solid #e9ecef;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .secondary-btn:hover {
+            border-color: #495057;
+            color: #2b2d42;
+            background: #f8f9fa;
         }
         
         .error-message {
@@ -125,6 +142,17 @@
             padding: 12px;
             border-radius: 6px;
             border-left: 3px solid #dc3545;
+        }
+        
+        .success-message {
+            color: #28a745;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #28a745;
         }
         
         .lock-icon {
@@ -140,25 +168,6 @@
             margin: 25px 0;
             font-weight: 400;
             letter-spacing: -0.3px;
-        }
-        
-        .logout-btn {
-            background: transparent;
-            color: #6c757d;
-            border: 1.5px solid #e9ecef;
-            padding: 12px 28px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            border-color: #495057;
-            color: #2b2d42;
-            background: #f8f9fa;
         }
         
         .user-info {
@@ -207,12 +216,29 @@
             margin-top: 10px;
         }
         
+        .auth-toggle {
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .auth-toggle a {
+            color: #2b2d42;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .login-container, .page-container {
+        .login-container, .register-container, .page-container {
             animation: fadeIn 0.5s ease-out;
         }
         
@@ -227,37 +253,61 @@
                 padding: 10px;
             }
             
-            .login-container, .page-container {
+            .login-container, .register-container, .page-container {
                 padding: 40px 25px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Contenedor de Login -->
     <div class="container">
+        <!-- Contenedor de Registro -->
+        <div class="register-container" id="registerContainer">
+            <div class="lock-icon">👤</div>
+            <h1 class="logo">Crear <span class="logo-accent">Cuenta</span></h1>
+            <p class="subtitle">Regístrate para acceder al contenido</p>
+            
+            <form class="auth-form" id="registerForm">
+                <input type="text" class="form-input" id="registerUsername" placeholder="Nombre de usuario" required>
+                <input type="email" class="form-input" id="registerEmail" placeholder="Correo electrónico" required>
+                <input type="password" class="form-input" id="registerPassword" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                <button type="submit" class="submit-btn" id="registerBtn">Crear cuenta</button>
+            </form>
+            
+            <div class="error-message" id="registerErrorMessage"></div>
+            <div class="success-message" id="registerSuccessMessage"></div>
+            
+            <div class="auth-toggle">
+                ¿Ya tienes cuenta? <a id="showLoginLink">Iniciar sesión</a>
+            </div>
+        </div>
+        
+        <!-- Contenedor de Login -->
         <div class="login-container" id="loginContainer">
             <div class="lock-icon">🔒</div>
             <h1 class="logo">Bienvenido <span class="logo-accent">Angel</span></h1>
-            <p class="subtitle">Acceso restringido a personas autorizadas</p>
+            <p class="subtitle">Acceso restringido a usuarios registrados</p>
             
-            <form class="password-form" id="passwordForm">
-                <input type="password" class="password-input" id="passwordInput" placeholder="Ingresa la contraseña de acceso" required>
-                <button type="submit" class="submit-btn">Acceder a la página privada</button>
+            <form class="auth-form" id="loginForm">
+                <input type="email" class="form-input" id="loginEmail" placeholder="Correo electrónico" required>
+                <input type="password" class="form-input" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit" class="submit-btn" id="loginBtn">Iniciar sesión</button>
             </form>
             
-            <div class="error-message" id="errorMessage">
-                Contraseña incorrecta. Por favor, intenta nuevamente.
+            <div class="error-message" id="loginErrorMessage"></div>
+            
+            <div class="auth-toggle">
+                ¿No tienes cuenta? <a id="showRegisterLink">Regístrate aquí</a>
             </div>
             
             <p style="color: #adb5bd; margin-top: 25px; font-size: 0.85rem;">
-                Solo el propietario y personas autorizadas pueden acceder
+                Solo usuarios registrados pueden acceder
             </p>
         </div>
         
         <!-- Contenedor de la Página Principal -->
         <div class="page-container" id="pageContainer">
-            <h1 class="logo">Bienvenido <span class="logo-accent">Angel</span></h1>
+            <h1 class="logo">Bienvenido <span class="logo-accent" id="userDisplayName">Usuario</span></h1>
             <p class="subtitle">Página personal privada</p>
             
             <div class="welcome-message">
@@ -270,12 +320,16 @@
             
             <div class="user-info">
                 <div class="info-item">
-                    <span class="info-label">PROPIETARIO</span>
-                    <span class="info-value">Bienvenido Angel</span>
+                    <span class="info-label">USUARIO</span>
+                    <span class="info-value" id="userName">Cargando...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">EMAIL</span>
+                    <span class="info-value" id="userEmail">Cargando...</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">TIPO DE ACCESO</span>
-                    <span class="info-value">Privado • Personal</span>
+                    <span class="info-value">Registrado • Verificado</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">ÚLTIMO ACCESO</span>
@@ -284,66 +338,186 @@
             </div>
             
             <div class="page-content">
-                <p>Esta es mi pagina privada.</p>
+                <p>Esta es mi página personal privada. Un espacio digital personal donde puedo almacenar información, ideas o simplemente tener mi presencia en internet.</p>
                 
-                <p style="margin-top: 15px;">Futuro Ingeniero.</p>
+                <p style="margin-top: 15px;">El diseño minimalista y la seguridad de acceso reflejan mi preferencia por la elegancia simple y la privacidad.</p>
             </div>
             
-            <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
+            <button class="secondary-btn" id="logoutBtn">Cerrar sesión</button>
         </div>
     </div>
 
     <script>
-        // Contraseña para acceder (cámbiala por la que prefieras)
-        const CORRECT_PASSWORD = "DB7FE4455AB8E666";
-        
+        // Configuración de Firebase - ¡REEMPLAZA CON TUS PROPIAS CREDENCIALES!
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO_ID",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
         // Elementos del DOM
         const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
         const pageContainer = document.getElementById('pageContainer');
-        const passwordForm = document.getElementById('passwordForm');
-        const passwordInput = document.getElementById('passwordInput');
-        const errorMessage = document.getElementById('errorMessage');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showLoginLink = document.getElementById('showLoginLink');
+        const showRegisterLink = document.getElementById('showRegisterLink');
         const logoutBtn = document.getElementById('logoutBtn');
         const lastAccessElement = document.getElementById('lastAccess');
-        
-        // Verificar si ya hay una sesión activa
-        if (localStorage.getItem('authenticated') === 'true') {
-            showPage();
-        }
-        
-        // Manejar el envío del formulario de contraseña
-        passwordForm.addEventListener('submit', function(e) {
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+
+        // Mostrar/ocultar formularios
+        showLoginLink.addEventListener('click', () => {
+            registerContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            clearMessages();
+        });
+
+        showRegisterLink.addEventListener('click', () => {
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'block';
+            clearMessages();
+        });
+
+        // Manejar registro
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const enteredPassword = passwordInput.value;
+            const registerBtn = document.getElementById('registerBtn');
+            const registerErrorMessage = document.getElementById('registerErrorMessage');
+            const registerSuccessMessage = document.getElementById('registerSuccessMessage');
             
-            if (enteredPassword === CORRECT_PASSWORD) {
-                // Contraseña correcta
-                localStorage.setItem('authenticated', 'true');
-                showPage();
-            } else {
-                // Contraseña incorrecta
-                errorMessage.style.display = 'block';
-                passwordInput.value = '';
-                passwordInput.focus();
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creando cuenta...';
+            clearMessages();
+
+            try {
+                // Crear usuario en Firebase
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                // Efecto de vibración
-                passwordInput.style.animation = 'shake 0.4s';
+                // Actualizar el perfil con el nombre de usuario
+                await user.updateProfile({
+                    displayName: username
+                });
+
+                registerSuccessMessage.style.display = 'block';
+                registerSuccessMessage.textContent = '¡Cuenta creada exitosamente! Redirigiendo...';
+                
+                // Esperar un momento y mostrar login
                 setTimeout(() => {
-                    passwordInput.style.animation = '';
-                }, 400);
+                    registerContainer.style.display = 'none';
+                    loginContainer.style.display = 'block';
+                    registerForm.reset();
+                }, 2000);
+
+            } catch (error) {
+                let errorMessage = 'Error al crear la cuenta. ';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage += 'Este correo ya está registrado.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'El correo electrónico no es válido.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage += 'La contraseña es demasiado débil.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                registerErrorMessage.style.display = 'block';
+                registerErrorMessage.textContent = errorMessage;
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Crear cuenta';
             }
         });
-        
-        // Manejar el cierre de sesión
-        logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('authenticated');
-            showLogin();
+
+        // Manejar login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginErrorMessage = document.getElementById('loginErrorMessage');
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Iniciando sesión...';
+            clearMessages();
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                // El cambio de estado de autenticación manejará la redirección
+            } catch (error) {
+                let errorMessage = 'Error al iniciar sesión. ';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'Usuario no encontrado.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage += 'Contraseña incorrecta.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'El correo electrónico no es válido.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                loginErrorMessage.style.display = 'block';
+                loginErrorMessage.textContent = errorMessage;
+                
+                // Efecto de vibración
+                document.getElementById('loginPassword').style.animation = 'shake 0.4s';
+                setTimeout(() => {
+                    document.getElementById('loginPassword').style.animation = '';
+                }, 400);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Iniciar sesión';
+            }
         });
-        
+
+        // Manejar logout
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut();
+        });
+
+        // Observador de estado de autenticación
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Usuario logueado
+                showPage(user);
+            } else {
+                // Usuario no logueado
+                showLogin();
+            }
+        });
+
         // Mostrar la página principal
-        function showPage() {
+        function showPage(user) {
             loginContainer.style.display = 'none';
+            registerContainer.style.display = 'none';
             pageContainer.style.display = 'block';
+            
+            // Actualizar información del usuario
+            userDisplayName.textContent = user.displayName || 'Usuario';
+            userName.textContent = user.displayName || 'Sin nombre';
+            userEmail.textContent = user.email;
             
             // Actualizar la hora del último acceso
             const now = new Date();
@@ -356,18 +530,27 @@
             };
             lastAccessElement.textContent = now.toLocaleDateString('es-ES', options);
         }
-        
+
         // Mostrar el formulario de login
         function showLogin() {
             pageContainer.style.display = 'none';
+            registerContainer.style.display = 'none';
             loginContainer.style.display = 'block';
-            passwordInput.value = '';
-            errorMessage.style.display = 'none';
-            passwordInput.focus();
+            loginForm.reset();
+            clearMessages();
+            document.getElementById('loginEmail').focus();
         }
-        
-        // Enfocar el input de contraseña al cargar
-        passwordInput.focus();
+
+        // Limpiar mensajes de error/éxito
+        function clearMessages() {
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => {
+                msg.style.display = 'none';
+                msg.textContent = '';
+            });
+        }
+
+        // Enfocar el input de email al cargar
+        document.getElementById('loginEmail').focus();
     </script>
 </body>
 </html>
