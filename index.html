@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido Angel | Acceso Privado</title>
     
-    <!-- Firebase SDK (compat) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
         * {
@@ -32,7 +34,7 @@
             max-width: 480px;
         }
         
-        .login-container, .register-container, .page-container {
+        .login-container, .register-container, .verify-container, .page-container {
             background: #ffffff;
             padding: 50px 40px;
             border-radius: 12px;
@@ -45,7 +47,7 @@
             margin-bottom: 20px;
         }
         
-        .register-container {
+        .register-container, .verify-container {
             display: none;
         }
         
@@ -91,6 +93,29 @@
             outline: none;
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(73, 80, 87, 0.1);
+        }
+        
+        .code-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .code-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+        
+        .code-input:focus {
+            border-color: #007bff;
+            outline: none;
+            background: #ffffff;
         }
         
         .submit-btn {
@@ -153,6 +178,16 @@
             padding: 12px;
             border-radius: 6px;
             border-left: 3px solid #28a745;
+        }
+        
+        .info-message {
+            color: #6c757d;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #6c757d;
         }
         
         .lock-icon {
@@ -233,12 +268,28 @@
             text-decoration: underline;
         }
         
+        .resend-code {
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .resend-code a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .resend-code a:hover {
+            text-decoration: underline;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .login-container, .register-container, .page-container {
+        .login-container, .register-container, .verify-container, .page-container {
             animation: fadeIn 0.5s ease-out;
         }
         
@@ -253,8 +304,14 @@
                 padding: 10px;
             }
             
-            .login-container, .register-container, .page-container {
+            .login-container, .register-container, .verify-container, .page-container {
                 padding: 40px 25px;
+            }
+            
+            .code-input {
+                width: 45px;
+                height: 55px;
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -279,6 +336,41 @@
             
             <div class="auth-toggle">
                 ¿Ya tienes cuenta? <a id="showLoginLink">Iniciar sesión</a>
+            </div>
+        </div>
+        
+        <!-- Contenedor de Verificación -->
+        <div class="verify-container" id="verifyContainer">
+            <div class="lock-icon">📧</div>
+            <h1 class="logo">Verifica tu <span class="logo-accent">Cuenta</span></h1>
+            <p class="subtitle">Ingresa el código que enviamos a tu correo</p>
+            
+            <div class="info-message" id="verifyInfoMessage">
+                Hemos enviado un código de verificación a: <strong id="userEmailDisplay"></strong>
+            </div>
+            
+            <form class="auth-form" id="verifyForm">
+                <div class="code-inputs">
+                    <input type="text" class="code-input" id="code1" maxlength="1" required>
+                    <input type="text" class="code-input" id="code2" maxlength="1" required>
+                    <input type="text" class="code-input" id="code3" maxlength="1" required>
+                    <input type="text" class="code-input" id="code4" maxlength="1" required>
+                    <input type="text" class="code-input" id="code5" maxlength="1" required>
+                    <input type="text" class="code-input" id="code6" maxlength="1" required>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="verifyBtn">Verificar cuenta</button>
+            </form>
+            
+            <div class="error-message" id="verifyErrorMessage"></div>
+            <div class="success-message" id="verifySuccessMessage"></div>
+            
+            <div class="resend-code">
+                ¿No recibiste el código? <a id="resendCodeLink">Reenviar código</a>
+            </div>
+            
+            <div class="auth-toggle">
+                <a id="backToRegisterLink">Volver al registro</a>
             </div>
         </div>
         
@@ -348,46 +440,98 @@
     </div>
 
     <script>
-        // Configuración de Firebase - ¡REEMPLAZA CON TUS PROPIAS CREDENCIALES!
+        // Configuración de Firebase CON TUS CREDENCIALES
         const firebaseConfig = {
-          apiKey: "AIzaSyBhBEtCo8Mjftwr8Uz67KJCSpIKgpw0200",
-          authDomain: "mi-pagina-e045c.firebaseapp.com",
-          projectId: "mi-pagina-e045c",
-          storageBucket: "mi-pagina-e045c.firebasestorage.app",
-          messagingSenderId: "641205268128",
-          appId: "1:641205268128:web:a05470d1959b584c3be3c5",
-          measurementId: "G-H69B3H106G"
+            apiKey: "AIzaSyBhBEtCo8Mjftwr8Uz67KJCSpIKgpw0200",
+            authDomain: "mi-pagina-e045c.firebaseapp.com",
+            projectId: "mi-pagina-e045c",
+            storageBucket: "mi-pagina-e045c.firebasestorage.app",
+            messagingSenderId: "641205268128",
+            appId: "1:641205268128:web:a05470d1959b584c3be3c5"
         };
 
-        // Inicializar Firebase (compat)
+        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // Elementos del DOM
         const loginContainer = document.getElementById('loginContainer');
         const registerContainer = document.getElementById('registerContainer');
+        const verifyContainer = document.getElementById('verifyContainer');
         const pageContainer = document.getElementById('pageContainer');
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
+        const verifyForm = document.getElementById('verifyForm');
         const showLoginLink = document.getElementById('showLoginLink');
         const showRegisterLink = document.getElementById('showRegisterLink');
+        const backToRegisterLink = document.getElementById('backToRegisterLink');
+        const resendCodeLink = document.getElementById('resendCodeLink');
         const logoutBtn = document.getElementById('logoutBtn');
         const lastAccessElement = document.getElementById('lastAccess');
         const userDisplayName = document.getElementById('userDisplayName');
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
+        const userEmailDisplay = document.getElementById('userEmailDisplay');
+
+        // Variables para almacenar datos temporales del registro
+        let pendingUser = null;
+        let verificationCode = '';
+
+        // Generar código de verificación aleatorio
+        function generateVerificationCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Simular envío de código por correo (en un caso real usarías un servicio de email)
+        function sendVerificationCode(email, code) {
+            console.log(`Código de verificación para ${email}: ${code}`);
+            // En un caso real, aquí integrarías con SendGrid, EmailJS, etc.
+            alert(`🔐 Código de verificación: ${code}\n\n(Para producción, integra un servicio de email real)`);
+            
+            // Guardar el código en Firestore para validación
+            return db.collection('verificationCodes').doc(email).set({
+                code: code,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                used: false
+            });
+        }
 
         // Mostrar/ocultar formularios
         showLoginLink.addEventListener('click', () => {
             registerContainer.style.display = 'none';
+            verifyContainer.style.display = 'none';
             loginContainer.style.display = 'block';
             clearMessages();
         });
 
         showRegisterLink.addEventListener('click', () => {
             loginContainer.style.display = 'none';
+            verifyContainer.style.display = 'none';
             registerContainer.style.display = 'block';
             clearMessages();
+        });
+
+        backToRegisterLink.addEventListener('click', () => {
+            verifyContainer.style.display = 'none';
+            registerContainer.style.display = 'block';
+            clearMessages();
+        });
+
+        // Manejar código de verificación en los inputs
+        const codeInputs = document.querySelectorAll('.code-input');
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < codeInputs.length - 1) {
+                    codeInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                    codeInputs[index - 1].focus();
+                }
+            });
         });
 
         // Manejar registro
@@ -406,24 +550,22 @@
             clearMessages();
 
             try {
-                // Crear usuario en Firebase (compat)
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+                // Generar código de verificación
+                verificationCode = generateVerificationCode();
                 
-                // Actualizar el perfil con el nombre de usuario
-                await user.updateProfile({
-                    displayName: username
-                });
-
-                registerSuccessMessage.style.display = 'block';
-                registerSuccessMessage.textContent = '¡Cuenta creada exitosamente! Redirigiendo...';
+                // Guardar datos temporales del usuario
+                pendingUser = { username, email, password };
                 
-                // Esperar un momento y mostrar login
-                setTimeout(() => {
-                    registerContainer.style.display = 'none';
-                    loginContainer.style.display = 'block';
-                    registerForm.reset();
-                }, 2000);
+                // Enviar código de verificación
+                await sendVerificationCode(email, verificationCode);
+                
+                // Mostrar panel de verificación
+                userEmailDisplay.textContent = email;
+                registerContainer.style.display = 'none';
+                verifyContainer.style.display = 'block';
+                
+                // Enfocar el primer input del código
+                document.getElementById('code1').focus();
 
             } catch (error) {
                 let errorMessage = 'Error al crear la cuenta. ';
@@ -445,6 +587,104 @@
             } finally {
                 registerBtn.disabled = false;
                 registerBtn.textContent = 'Crear cuenta';
+            }
+        });
+
+        // Manejar verificación de código
+        verifyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const verifyBtn = document.getElementById('verifyBtn');
+            const verifyErrorMessage = document.getElementById('verifyErrorMessage');
+            const verifySuccessMessage = document.getElementById('verifySuccessMessage');
+            
+            // Obtener código ingresado
+            const enteredCode = Array.from(codeInputs).map(input => input.value).join('');
+            
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verificando...';
+            clearMessages();
+
+            try {
+                // Verificar el código
+                if (enteredCode === verificationCode) {
+                    // Crear usuario en Firebase
+                    const userCredential = await auth.createUserWithEmailAndPassword(
+                        pendingUser.email, 
+                        pendingUser.password
+                    );
+                    const user = userCredential.user;
+                    
+                    // Actualizar el perfil con el nombre de usuario
+                    await user.updateProfile({
+                        displayName: pendingUser.username
+                    });
+
+                    // Guardar información adicional en Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        username: pendingUser.username,
+                        email: pendingUser.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        verified: true
+                    });
+
+                    // Marcar código como usado
+                    await db.collection('verificationCodes').doc(pendingUser.email).update({
+                        used: true
+                    });
+
+                    verifySuccessMessage.style.display = 'block';
+                    verifySuccessMessage.textContent = '¡Cuenta verificada exitosamente!';
+                    
+                    // Limpiar datos temporales
+                    pendingUser = null;
+                    verificationCode = '';
+                    
+                    // Redirigir a la página principal
+                    setTimeout(() => {
+                        showPage(user);
+                    }, 1500);
+
+                } else {
+                    throw new Error('Código de verificación incorrecto');
+                }
+
+            } catch (error) {
+                verifyErrorMessage.style.display = 'block';
+                verifyErrorMessage.textContent = error.message;
+                
+                // Efecto de vibración
+                codeInputs.forEach(input => {
+                    input.style.animation = 'shake 0.4s';
+                    setTimeout(() => {
+                        input.style.animation = '';
+                    }, 400);
+                });
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verificar cuenta';
+            }
+        });
+
+        // Reenviar código de verificación
+        resendCodeLink.addEventListener('click', async () => {
+            if (!pendingUser) return;
+            
+            try {
+                verificationCode = generateVerificationCode();
+                await sendVerificationCode(pendingUser.email, verificationCode);
+                
+                const verifySuccessMessage = document.getElementById('verifySuccessMessage');
+                verifySuccessMessage.style.display = 'block';
+                verifySuccessMessage.textContent = '¡Código reenviado! Revisa tu correo.';
+                
+                // Limpiar inputs
+                codeInputs.forEach(input => input.value = '');
+                document.getElementById('code1').focus();
+                
+            } catch (error) {
+                const verifyErrorMessage = document.getElementById('verifyErrorMessage');
+                verifyErrorMessage.style.display = 'block';
+                verifyErrorMessage.textContent = 'Error al reenviar el código.';
             }
         });
 
@@ -513,6 +753,7 @@
         function showPage(user) {
             loginContainer.style.display = 'none';
             registerContainer.style.display = 'none';
+            verifyContainer.style.display = 'none';
             pageContainer.style.display = 'block';
             
             // Actualizar información del usuario
@@ -536,8 +777,11 @@
         function showLogin() {
             pageContainer.style.display = 'none';
             registerContainer.style.display = 'none';
+            verifyContainer.style.display = 'none';
             loginContainer.style.display = 'block';
             loginForm.reset();
+            registerForm.reset();
+            verifyForm.reset();
             clearMessages();
             document.getElementById('loginEmail').focus();
         }
@@ -554,4 +798,3 @@
         document.getElementById('loginEmail').focus();
     </script>
 </body>
-</html>
