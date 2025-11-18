@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenido Angel | Acceso Privado</title>
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     
@@ -349,30 +349,17 @@
 
     <script>
         // Configuración de Firebase - ¡REEMPLAZA CON TUS PROPIAS CREDENCIALES!
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBhBEtCo8Mjftwr8Uz67KJCSpIKgpw0200",
-  authDomain: "mi-pagina-e045c.firebaseapp.com",
-  projectId: "mi-pagina-e045c",
-  storageBucket: "mi-pagina-e045c.firebasestorage.app",
-  messagingSenderId: "641205268128",
-  appId: "1:641205268128:web:a05470d1959b584c3be3c5",
-  measurementId: "G-H69B3H106G"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        const firebaseConfig = {
+          apiKey: "AIzaSyBhBEtCo8Mjftwr8Uz67KJCSpIKgpw0200",
+          authDomain: "mi-pagina-e045c.firebaseapp.com",
+          projectId: "mi-pagina-e045c",
+          storageBucket: "mi-pagina-e045c.firebasestorage.app",
+          messagingSenderId: "641205268128",
+          appId: "1:641205268128:web:a05470d1959b584c3be3c5",
+          measurementId: "G-H69B3H106G"
         };
 
-        // Inicializar Firebase
+        // Inicializar Firebase (compat)
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
@@ -419,7 +406,7 @@ const analytics = getAnalytics(app);
             clearMessages();
 
             try {
-                // Crear usuario en Firebase
+                // Crear usuario en Firebase (compat)
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
